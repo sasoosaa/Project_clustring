@@ -6,15 +6,14 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import silhouette_score
 import plotly.graph_objs as go
 import plotly.express as px
-import matplotlib.pyplot as plt  # Added import for matplotlib
-from scipy.cluster import hierarchy
+import matplotlib.pyplot as plt
+from scipy.cluster.hierarchy import linkage, dendrogram  # Modified import statement
 import base64
 import requests
 
 # Set background image
-background_image_url = "https://previews.123rf.com/images/pwstudio/pwstudio1906/pwstudio190600088/124958486-artificial-neural-network-machine-learning-background-concept.jpg"
+background_image_url = "https://img.freepik.com/free-vector/ai-technology-brain-background-vector-digital-transformation-concept_53876-117820.jpg?w=900&t=st=1713012632~exp=1713013232~hmac=05da65e2d9e6da77202ded9006cfecb86c0c11fbc70346fb0532307b18d8ac3f"
 
-@st.cache_data()
 def get_base64_of_bin_file(url):
     data = requests.get(url).content
     return base64.b64encode(data).decode()
@@ -134,13 +133,13 @@ class HierarchicalClustering:
         return np.sqrt(np.sum((x1 - x2) ** 2))
 
 def plot_dendrogram(data):
-    Z = hierarchy.linkage(data, method='ward')
+    Z = linkage(data, method='ward')  # Use linkage from scipy.cluster.hierarchy directly
     plt.figure(figsize=(10, 5))
-    dn = hierarchy.dendrogram(Z)
+    dn = dendrogram(Z)
     plt.title("Dendrogram")
     plt.xlabel("Data Points")
     plt.ylabel("Distance")
-    st.pyplot()
+    st.pyplot(plt.gcf())  # Pass the current figure as an argument to st.pyplot()
 
 def plot_result(X_reduced, labels, centroids):
     if X_reduced.shape[1] == 2:
@@ -260,4 +259,6 @@ def main():
             plot_dendrogram(data.values)  # Visualize the dendrogram
 
 if __name__ == "__main__":
+    st.set_option('deprecation.showPyplotGlobalUse', False)  # Disable the warning about st.pyplot() usage
     main()
+
